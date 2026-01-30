@@ -27,3 +27,16 @@ RetailAI is a GenAI-powered retail insights assistant that enables conversationa
 - Implementation: [src/utils/llm.py](src/utils/llm.py)
 - Example:
 	- `py scripts\ask_llm.py "Summarize what this project does"`
+
+## App entrypoint
+
+For a single, backend-style entrypoint, use [app.py](app.py):
+
+- Print resolved config:
+	- `py app.py config`
+- Raw LLM prompt:
+	- `py app.py llm "Hello"`
+- Summarize a CSV:
+	- `py app.py summarize --csv data\your_sales.csv`
+- Ask a question about a CSV:
+	- `py app.py ask --csv data\your_sales.csv --question "Which region leads sales?"`
