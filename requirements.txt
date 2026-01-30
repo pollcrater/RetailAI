@@ -1,8 +1,12 @@
 # Core
 python-dotenv
+pydantic-settings>=2.2.1
 
 # LLM
 openai
+
+# Obserability
+langsmith
 
 # Windows corporate TLS interception (Zscaler, etc.)
 truststore>=0.10.0; platform_system=="Windows"

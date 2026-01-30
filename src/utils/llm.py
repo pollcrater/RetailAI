@@ -7,8 +7,8 @@ from typing import Any
 
 import httpx
 from openai import OpenAI
-from dotenv import load_dotenv
-load_dotenv()
+
+from src.config import get_settings
 
 
 @dataclass(frozen=True)
@@ -58,12 +58,13 @@ def build_http_client() -> httpx.Client:
 
 
 def get_llm_config() -> LlmConfig:
-    api_key = _env("OPENAI_API_KEY")
+    settings = get_settings()
+    api_key = settings.openai_api_key
     if not api_key:
         raise RuntimeError("Missing OPENAI_API_KEY (set it in .env or environment)")
 
-    model = _env("OPENAI_MODEL", "gpt-5-nano") or "gpt-5-nano"
-    base_url = _env("OPENAI_BASE_URL")
+    model = settings.openai_model
+    base_url = settings.openai_base_url
 
     return LlmConfig(api_key=api_key, model=model, base_url=base_url)
 
@@ -72,9 +73,12 @@ def get_openai_client(config: LlmConfig | None = None) -> OpenAI:
     """Returns an `OpenAI` client wired with the corporate-safe httpx client."""
 
     cfg = config or get_llm_config()
+    settings = get_settings()
+
     kwargs: dict[str, Any] = {
         "api_key": cfg.api_key,
         "http_client": build_http_client(),
+        "max_retries": settings.max_retries,
     }
     if cfg.base_url:
         kwargs["base_url"] = cfg.base_url
