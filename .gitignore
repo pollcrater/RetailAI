@@ -205,3 +205,10 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+*.pyc
+.pytest_cache/
+*.db
+data/*.csv
+.DS_Store
+*.swp
