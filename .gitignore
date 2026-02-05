@@ -212,3 +212,8 @@ __marimo__/
 data/*.csv
 .DS_Store
 *.swp
+
+
+/data/processed
+/docs/agentic_architecture.pdf
+/scripts/

@@ -40,3 +40,41 @@ For a single, backend-style entrypoint, use [app.py](app.py):
 	- `py app.py summarize --csv data\your_sales.csv`
 - Ask a question about a CSV:
 	- `py app.py ask --csv data\your_sales.csv --question "Which region leads sales?"`
+- Summarize DuckDB (KPIs + coverage):
+	- `py app.py summarize-db --db data\retail_sales.duckdb --table mart.sales_clean`
+- Multi-agent QnA over DuckDB:
+	- `py app.py ask-db --question "Total sales by category?" --db data\retail_sales.duckdb --no-load`
+- Persist multi-turn memory across runs:
+	- `py app.py ask-db --question "What is total sales?" --memory-file data\memory\db_qna_memory.json --no-load`
+
+## Assignment-aligned, streamlined flow
+
+Business flow (simple + correct):
+1) **Explore & profile data** → generate schema artifacts.
+2) **Materialize raw tables in DuckDB** (one table per file; no schema mixing).
+3) **Process uploads** → cleaned/normalized CSV → load to DuckDB (mart layer).
+4) **Multi-agent QnA** (planner → executor → validator) over DuckDB.
+
+Commands:
+- Generate schema + DuckDB raw load SQL:
+	- `py scripts\schema_analyzer.py --data-dir data\source --output-dir data\schema_analysis --model-mode separate`
+- Process an uploaded CSV and load cleaned data to DuckDB (mart layer):
+	- `py app.py ingest --csv data\source\amazon_sale_report.csv --table mart.sales_clean`
+- Ask questions over DuckDB with LangGraph (3 agents):
+	- `py app.py ask-db --question "How many rows are in raw.raw_amazon_sale_report?"`
+
+## Monitoring & Evaluation (concise)
+
+Track these per run:
+- Accuracy: compare answers to SQL results or known benchmarks.
+- Latency: total response time and per-agent timing.
+- Cost: token usage and request counts.
+- Robustness: count retries, failures, and fallback responses.
+
+Fallback rules:
+- If planner/executor fails twice, return a safe error + suggestion.
+- If schema/metrics missing, summarize coverage + sample rows only.
+
+Artifacts:
+- DuckDB raw load SQL: [data/schema_analysis/duckdb_load_raw.sql](data/schema_analysis/duckdb_load_raw.sql)
+- LangGraph diagram (Mermaid): [data/schema_analysis/langgraph_qna.mmd](data/schema_analysis/langgraph_qna.mmd)
