@@ -212,3 +212,12 @@ __marimo__/
 data/*.csv
 .DS_Store
 *.swp
+
+
+/data/processed
+/docs/agentic_architecture.pdf
+
+/scripts/explore_data.py
+/data/source/amazon_sales_report_summeries.txt
+/scripts/export_langgraph_png.py
+scripts/export_langgraph_diagram.py

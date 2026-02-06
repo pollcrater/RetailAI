@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import os
 import ssl
+import time
+import random
 from dataclasses import dataclass
 from typing import Any
 
 import httpx
 from openai import OpenAI
+from openai import APIConnectionError, APITimeoutError, APIStatusError, RateLimitError
 
 from src.config import get_settings
 
@@ -95,9 +98,28 @@ def generate_text(
 
     cfg = get_llm_config()
     client = get_openai_client(cfg)
+    settings = get_settings()
 
-    response = client.responses.create(
-        model=model or cfg.model,
-        input=prompt,
-    )
-    return response.output_text
+    max_retries = max(0, int(settings.max_retries))
+    for attempt in range(max_retries + 1):
+        try:
+            response = client.responses.create(
+                model=model or cfg.model,
+                input=prompt,
+            )
+            return response.output_text
+        except (RateLimitError, APITimeoutError, APIConnectionError, APIStatusError) as e:
+            should_retry = True
+            if isinstance(e, APIStatusError) and e.status_code is not None:
+                should_retry = e.status_code >= 500 or e.status_code == 429
+            if not should_retry or attempt >= max_retries:
+                raise
+            sleep_s = min(8.0, (2 ** attempt)) + random.random() * 0.2
+            time.sleep(sleep_s)
+        except Exception:
+            if attempt >= max_retries:
+                raise
+            sleep_s = min(8.0, (2 ** attempt)) + random.random() * 0.2
+            time.sleep(sleep_s)
+
+    raise RuntimeError("LLM call failed after retries")

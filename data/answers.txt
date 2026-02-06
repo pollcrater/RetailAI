@@ -1,0 +1,57 @@
+2026-02-05 22:56:31,152 INFO __main__: Answering question using DuckDB at data\retail_sales.duckdb
+2026-02-05 22:56:31,156 INFO src.workflows.db_qna_graph: Planner start: question=What is the total sales in mart.sales_clean?
+2026-02-05 22:56:48,048 INFO httpx: HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-02-05 22:56:48,107 INFO src.workflows.db_qna_graph: Planner ok: sql_len=78     
+2026-02-05 22:56:48,107 INFO src.workflows.db_qna_graph: Executor start
+2026-02-05 22:56:48,139 INFO src.workflows.db_qna_graph: Executor ok
+2026-02-05 22:56:48,139 INFO src.workflows.db_qna_graph: Validator start
+2026-02-05 22:57:00,334 INFO httpx: HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-02-05 22:57:00,350 INFO src.workflows.db_qna_graph: QnA memory updated: size=1 2026-02-05 22:56:48,107 INFO src.workflows.db_qna_graph: Planner ok: sql_len=78     
+2026-02-05 22:56:48,107 INFO src.workflows.db_qna_graph: Executor start
+2026-02-05 22:56:48,139 INFO src.workflows.db_qna_graph: Executor ok
+2026-02-05 22:56:48,139 INFO src.workflows.db_qna_graph: Validator start
+2026-02-05 22:57:00,334 INFO httpx: HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-02-05 22:57:00,350 INFO src.workflows.db_qna_graph: QnA memory updated: size=1 2026-02-05 22:56:48,107 INFO src.workflows.db_qna_graph: Executor start
+2026-02-05 22:56:48,139 INFO src.workflows.db_qna_graph: Executor ok
+2026-02-05 22:56:48,139 INFO src.workflows.db_qna_graph: Validator start
+2026-02-05 22:57:00,334 INFO httpx: HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-02-05 22:57:00,350 INFO src.workflows.db_qna_graph: QnA memory updated: size=1 2026-02-05 22:56:48,139 INFO src.workflows.db_qna_graph: Executor ok
+2026-02-05 22:56:48,139 INFO src.workflows.db_qna_graph: Validator start
+2026-02-05 22:57:00,334 INFO httpx: HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-02-05 22:57:00,350 INFO src.workflows.db_qna_graph: QnA memory updated: size=1 2026-02-05 22:56:48,139 INFO src.workflows.db_qna_graph: Validator start
+2026-02-05 22:57:00,334 INFO httpx: HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-02-05 22:57:00,350 INFO src.workflows.db_qna_graph: QnA memory updated: size=1 2026-02-05 22:57:00,334 INFO httpx: HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-02-05 22:57:00,350 INFO src.workflows.db_qna_graph: QnA memory updated: size=1 ponses "HTTP/1.1 200 OK"
+2026-02-05 22:57:00,350 INFO src.workflows.db_qna_graph: QnA memory updated: size=1 2026-02-05 22:57:00,350 INFO src.workflows.db_qna_graph: QnA memory updated: size=1 filters={}
+filters={}
+2026-02-05 22:57:00,350 INFO src.workflows.db_qna_graph: Validator ok
+2026-02-05 22:57:00,350 INFO src.workflows.db_qna_graph: QnA completed: memory_size=2026-02-05 22:57:00,350 INFO src.workflows.db_qna_graph: Validator ok
+2026-02-05 22:57:00,350 INFO src.workflows.db_qna_graph: QnA completed: memory_size=2026-02-05 22:57:00,350 INFO src.workflows.db_qna_graph: QnA completed: memory_size=1 resolved_filters={}
+- Total sales in mart.sales_clean: 78,592,678.30 (rounded to 2 decimals)
+1 resolved_filters={}
+- Total sales in mart.sales_clean: 78,592,678.30 (rounded to 2 decimals)
+- Total sales in mart.sales_clean: 78,592,678.30 (rounded to 2 decimals)
+- Exact value from results: 78592678.29999992
+- Source: results JSON row total_sales (rows[0].total_sales)
+- If you want a different precision or currency formatting, tell me how you’d like it presented
+
+
+
+-------------------------------------------------------------
+6-02-05 23:04:14,373 INFO __main__: Answering question using DuckDB at data\retail_sales.duckdb
+2026-02-05 23:04:14,382 INFO src.workflows.db_qna_graph: Planner start: question=What is the total sales in mart.sales_clean?
+2026-02-05 23:04:34,663 INFO httpx: HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-02-05 23:04:34,749 INFO src.workflows.db_qna_graph: Planner ok: sql_len=78
+2026-02-05 23:04:34,749 INFO src.workflows.db_qna_graph: Executor start
+2026-02-05 23:04:34,798 INFO src.workflows.db_qna_graph: Executor ok
+2026-02-05 23:04:34,798 INFO src.workflows.db_qna_graph: Validator start
+2026-02-05 23:04:44,943 INFO httpx: HTTP Request: POST https://api.openai.com/v1/responses "HTTP/1.1 200 OK"
+2026-02-05 23:04:44,959 INFO src.workflows.db_qna_graph: QnA memory updated: size=3 filters={}
+2026-02-05 23:04:44,959 INFO src.workflows.db_qna_graph: Validator ok
+2026-02-05 23:04:44,959 INFO src.workflows.db_qna_graph: QnA completed: memory_size=3 resolved_filters={}
+- Question: total_sales in mart.sales_clean
+- Result set provided: total_sales = 78592678.29999992
+- Exact value: 78592678.29999992
+- Rounded to two decimals: 78592678.30
+- Interpretation: approximately 78.59 million
+- Note on query: The LIMIT 200 does not change the aggregate sum for this single-row result

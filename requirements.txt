@@ -5,6 +5,10 @@ pydantic-settings>=2.2.1
 # LLM
 openai
 
+# Agent orchestration
+langgraph>=0.2.0
+langchain-core>=0.3.0
+
 # Obserability
 langsmith
 
@@ -14,6 +18,9 @@ truststore>=0.10.0; platform_system=="Windows"
 
 # Data
 pandas
+
+# Analytics DB
+duckdb>=1.0.0
 
 # Optional (uncomment if needed)
 # numpy>=2.0.0
