@@ -1,0 +1,12 @@
+
+
+# Command to ingest data into the retail sales database:
+C:/Users/praveenkumar.reddybheemreddy@network.lilly.com/GenAI/RetailAI/.venv/Scripts/python.exe app.py ingest --csv data/source/amazon_sale_report.csv --table mart.sales_clean
+
+
+# Command to summarize the retail sales database table
+C:/Users/praveenkumar.reddybheemreddy@network.lilly.com/GenAI/RetailAI/.venv/Scripts/python.exe app.py summarize-db --db data/retail_sales.duckdb --table mart.sales_clean
+
+
+# QnA:
+ C:/Users/praveenkumar.reddybheemreddy@network.lilly.com/GenAI/RetailAI/.venv/Scripts/python.exe app.py ask-db --question "What is the top category by sales in mart.sales_clean?" --db data/retail_sales.duckdb --no-load

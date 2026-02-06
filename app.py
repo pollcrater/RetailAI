@@ -75,8 +75,8 @@ def main() -> int:
     p_db.add_argument(
         "--memory-file",
         type=Path,
-        default=None,
-        help="Optional JSON file to persist QnA memory across runs",
+        default=settings.project_root / "data" / "memory" / "db_qna_memory.json",
+        help="JSON file to persist QnA memory across runs",
     )
     p_db.add_argument(
         "--stream",

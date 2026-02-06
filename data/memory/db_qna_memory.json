@@ -1,0 +1,11 @@
+{
+  "memory": [
+    {
+      "question": "What is the top category by sales in mart.sales_clean?",
+      "answer": "- Top category by sales: Set\n- Total_sales for Set: 39,204,124.03\n- Next highest categories for context: kurta \u2014 21,299,546.70; Western Dress \u2014 11,216,072.69\n- Data source: mart.sales_clean (results from the provided aggregation)",
+      "sql": "SELECT CATEGORY AS category, SUM(AMOUNT) AS total_sales FROM mart.sales_clean GROUP BY CATEGORY ORDER BY SUM(AMOUNT) DESC LIMIT 200",
+      "filters": {}
+    }
+  ],
+  "resolved_filters": {}
+}

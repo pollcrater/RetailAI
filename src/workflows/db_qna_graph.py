@@ -181,7 +181,10 @@ def _load_memory(memory_file: Path) -> dict[str, Any]:
     try:
         if not memory_file.exists():
             return {"memory": [], "resolved_filters": {}}
-        data = json.loads(memory_file.read_text(encoding="utf-8"))
+        raw = memory_file.read_text(encoding="utf-8").strip()
+        if not raw:
+            return {"memory": [], "resolved_filters": {}}
+        data = json.loads(raw)
         memory = data.get("memory", []) if isinstance(data, dict) else []
         resolved_filters = data.get("resolved_filters", {}) if isinstance(data, dict) else {}
         if not isinstance(memory, list):

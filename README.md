@@ -75,6 +75,26 @@ Fallback rules:
 - If planner/executor fails twice, return a safe error + suggestion.
 - If schema/metrics missing, summarize coverage + sample rows only.
 
+## Deliverables Checklist
+
+- Code implementation: multi-agent QnA + summarization
+- Runs on sample CSVs
+- Dependencies + setup in this README
+- Architecture slides in [docs/ppt_slides.md](docs/ppt_slides.md)
+- Example outputs (summaries + QnA) captured in terminal logs
+
+## Assumptions, Limitations, Improvements
+
+Assumptions:
+- Input data is a CSV or structured report with consistent headers.
+- DuckDB can store cleaned datasets locally for demo scale.
+
+Limitations:
+- LLM rate limits can throttle summaries in bursts.
+- Some datasets lack numeric/date fields; summaries fall back to schema + samples.
+- PNG diagram export may be blocked by corporate SSL; Mermaid is provided.
+
 Artifacts:
 - DuckDB raw load SQL: [data/schema_analysis/duckdb_load_raw.sql](data/schema_analysis/duckdb_load_raw.sql)
 - LangGraph diagram (Mermaid): [data/schema_analysis/langgraph_qna.mmd](data/schema_analysis/langgraph_qna.mmd)
+- LangGraph diagram (PNG): [data/schema_analysis/langgraph_qna.png](data/schema_analysis/langgraph_qna.png)

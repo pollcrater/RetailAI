@@ -216,4 +216,8 @@ data/*.csv
 
 /data/processed
 /docs/agentic_architecture.pdf
-/scripts/
+
+/scripts/explore_data.py
+/data/source/amazon_sales_report_summeries.txt
+/scripts/export_langgraph_png.py
+scripts/export_langgraph_diagram.py
