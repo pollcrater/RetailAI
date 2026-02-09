@@ -221,3 +221,4 @@ data/*.csv
 /data/source/amazon_sales_report_summeries.txt
 /scripts/export_langgraph_png.py
 scripts/export_langgraph_diagram.py
+scripts/test_azure_openai_langchain.py
