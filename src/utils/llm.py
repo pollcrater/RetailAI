@@ -4,6 +4,7 @@ import os
 import ssl
 import time
 import random
+import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -114,7 +115,14 @@ def generate_text(
                 should_retry = e.status_code >= 500 or e.status_code == 429
             if not should_retry or attempt >= max_retries:
                 raise
-            sleep_s = min(8.0, (2 ** attempt)) + random.random() * 0.2
+            retry_hint_s: float | None = None
+            if isinstance(e, RateLimitError):
+                message = str(getattr(e, "message", "") or str(e))
+                match = re.search(r"try again in\s*(\d+)s", message, re.IGNORECASE)
+                if match:
+                    retry_hint_s = float(match.group(1))
+            sleep_base = min(8.0, (2 ** attempt)) + random.random() * 0.2
+            sleep_s = max(sleep_base, retry_hint_s or 0.0)
             time.sleep(sleep_s)
         except Exception:
             if attempt >= max_retries:

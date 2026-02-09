@@ -21,6 +21,8 @@ RetailAI is a GenAI-powered retail insights assistant that enables conversationa
 4) Test your LLM connectivity
 
 - `py scripts\test_openai.py`
+- Azure OpenAI (LangChain):
+	- `py scripts\test_azure_openai_langchain.py`
 
 5) Use the shared LLM helper
 
@@ -44,8 +46,8 @@ For a single, backend-style entrypoint, use [app.py](app.py):
 	- `py app.py summarize-db --db data\retail_sales.duckdb --table mart.sales_clean`
 - Multi-agent QnA over DuckDB:
 	- `py app.py ask-db --question "Total sales by category?" --db data\retail_sales.duckdb --no-load`
-- Persist multi-turn memory across runs:
-	- `py app.py ask-db --question "What is total sales?" --memory-file data\memory\db_qna_memory.json --no-load`
+- Persist multi-turn memory across runs (checkpointed by thread id):
+	- `py app.py ask-db --question "What is total sales?" --checkpoint-db data\checkpoints.db --thread-id user_123 --no-load`
 
 ## Assignment-aligned, streamlined flow
 

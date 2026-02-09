@@ -59,7 +59,7 @@
 - Metrics: accuracy, latency, cost, retries.
 - Safe SQL enforcement.
 - Retry/backoff on transient API errors.
-- Memory for multi‑turn context.
+- Checkpointed memory per thread (SQLite) for multi‑turn context.
 
 ## Slide 12 — Code Quality & Review Focus
 - Readability and maintainability

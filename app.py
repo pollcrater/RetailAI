@@ -73,10 +73,15 @@ def main() -> int:
         help="Skip loading raw tables before answering",
     )
     p_db.add_argument(
-        "--memory-file",
+        "--checkpoint-db",
         type=Path,
-        default=settings.project_root / "data" / "memory" / "db_qna_memory.json",
-        help="JSON file to persist QnA memory across runs",
+        default=settings.project_root / "data" / "checkpoints.db",
+        help="SQLite DB file for LangGraph checkpoints (memory + state)",
+    )
+    p_db.add_argument(
+        "--thread-id",
+        default="default",
+        help="Conversation thread id for checkpointed memory",
     )
     p_db.add_argument(
         "--stream",
@@ -158,8 +163,9 @@ def main() -> int:
                 question=args.question,
                 db_path=db_path,
                 ensure_raw_sql_file=ensure_sql,
-                memory_file=args.memory_file,
                 stream_mode=args.stream,
+                checkpoint_db_path=args.checkpoint_db,
+                thread_id=args.thread_id,
             )
         )
         return 0

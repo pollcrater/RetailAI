@@ -1,17 +1,18 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-import json
+import sqlite3
 from pathlib import Path
 from typing import Any, Literal, TypedDict
 
 from langgraph.graph import END, StateGraph
+from langgraph.checkpoint.sqlite import SqliteSaver
 import logging
 
 from src.agents.planner import SqlPlannerAgent
 from src.agents.executor import SqlExecutorAgent
 from src.agents.validator import ResultValidatorAgent
-from src.tools.duckdb_tools import DuckDBRunner, load_raw_from_sql_file
+from src.tools.duckdb_tools import DuckDBRunner, load_raw_from_sql_file, dataframe_to_json_preview
 
 
 class QnaState(TypedDict, total=False):
@@ -31,6 +32,8 @@ class QnaState(TypedDict, total=False):
     # executor outputs
     query_result_df: Any
     query_result_dfs: list[Any]
+    query_result_preview: str
+    query_result_previews: list[str]
     tool_error: str
 
     # validator outputs
@@ -57,7 +60,7 @@ class DbQnaWorkflow:
     max_iterations: int = 2
     memory_size: int = 5
 
-    def build(self):
+    def build(self, *, checkpointer: SqliteSaver | None = None):
         planner = SqlPlannerAgent()
         executor = SqlExecutorAgent()
         validator = ResultValidatorAgent()
@@ -98,11 +101,29 @@ class DbQnaWorkflow:
                     "tool_error": result.error or "Query failed",
                     "query_result_df": None,
                     "query_result_dfs": None,
+                    "query_result_preview": "",
+                    "query_result_previews": [],
                 }
             logger.info("Executor ok")
             if "dfs" in result.content:
-                return {**state, "tool_error": "", "query_result_dfs": result.content["dfs"]}
-            return {**state, "tool_error": "", "query_result_df": result.content["df"]}
+                previews = [dataframe_to_json_preview(d) for d in result.content["dfs"]]
+                return {
+                    **state,
+                    "tool_error": "",
+                    "query_result_dfs": None,
+                    "query_result_df": None,
+                    "query_result_preview": "",
+                    "query_result_previews": previews,
+                }
+            preview = dataframe_to_json_preview(result.content["df"])
+            return {
+                **state,
+                "tool_error": "",
+                "query_result_df": None,
+                "query_result_dfs": None,
+                "query_result_preview": preview,
+                "query_result_previews": [],
+            }
 
         def validate_node(state: QnaState) -> QnaState:
             logger.info("Validator start")
@@ -166,7 +187,7 @@ class DbQnaWorkflow:
         graph.add_edge("execute", "validate")
         graph.add_conditional_edges("validate", route_after_validate, {"plan": "plan", "end": END})
 
-        return graph.compile()
+        return graph.compile(checkpointer=checkpointer)
 
 
 def ensure_raw_loaded(*, db_path: Path, load_sql_file: Path) -> None:
@@ -177,42 +198,14 @@ def ensure_raw_loaded(*, db_path: Path, load_sql_file: Path) -> None:
         raise RuntimeError(res.error or "Failed to load raw tables")
 
 
-def _load_memory(memory_file: Path) -> dict[str, Any]:
-    try:
-        if not memory_file.exists():
-            return {"memory": [], "resolved_filters": {}}
-        raw = memory_file.read_text(encoding="utf-8").strip()
-        if not raw:
-            return {"memory": [], "resolved_filters": {}}
-        data = json.loads(raw)
-        memory = data.get("memory", []) if isinstance(data, dict) else []
-        resolved_filters = data.get("resolved_filters", {}) if isinstance(data, dict) else {}
-        if not isinstance(memory, list):
-            memory = []
-        if not isinstance(resolved_filters, dict):
-            resolved_filters = {}
-        return {"memory": memory, "resolved_filters": resolved_filters}
-    except Exception as e:
-        logging.getLogger(__name__).warning("Failed to load memory: %s", e)
-        return {"memory": [], "resolved_filters": {}}
-
-
-def _save_memory(memory_file: Path, *, memory: list[dict[str, Any]], resolved_filters: dict[str, Any]) -> None:
-    try:
-        memory_file.parent.mkdir(parents=True, exist_ok=True)
-        payload = {"memory": memory, "resolved_filters": resolved_filters}
-        memory_file.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
-    except Exception as e:
-        logging.getLogger(__name__).warning("Failed to save memory: %s", e)
-
-
 def run_db_qna(
     *,
     question: str,
     db_path: Path,
     ensure_raw_sql_file: Path | None = None,
-    memory_file: Path | None = None,
     stream_mode: str | None = None,
+    checkpoint_db_path: Path | None = None,
+    thread_id: str | None = None,
 ) -> str:
     """Convenience runner used by CLI."""
 
@@ -221,42 +214,45 @@ def run_db_qna(
 
     runner = DuckDBRunner(db_path=db_path)
     workflow = DbQnaWorkflow()
-    app = workflow.build()
 
-    memory_state = {"memory": [], "resolved_filters": {}}
-    if memory_file is not None:
-        memory_state = _load_memory(memory_file)
+    checkpointer = None
+    checkpoint_conn: sqlite3.Connection | None = None
+    if checkpoint_db_path is not None:
+        checkpoint_db_path.parent.mkdir(parents=True, exist_ok=True)
+        checkpoint_conn = sqlite3.connect(str(checkpoint_db_path), check_same_thread=False)
+        checkpointer = SqliteSaver(checkpoint_conn)
+
+    app = workflow.build(checkpointer=checkpointer)
 
     payload = {
         "question": question,
         "duckdb_runner": runner,
         "iterations": 0,
-        "memory": memory_state.get("memory", []),
-        "resolved_filters": memory_state.get("resolved_filters", {}),
-        "memory_size": workflow.memory_size,
+        "done": False,
     }
 
-    if stream_mode:
-        logging.getLogger(__name__).info("QnA stream mode enabled: %s", stream_mode)
-        for mode, data in app.stream(payload, stream_mode=[stream_mode]):
-            if mode == "updates" and isinstance(data, dict):
-                logging.getLogger(__name__).info("Stream update: %s", list(data.keys()))
-            elif mode == "tasks":
-                logging.getLogger(__name__).info("Stream task: %s", data)
-            elif mode == "checkpoints":
-                logging.getLogger(__name__).info("Stream checkpoint")
-            elif mode == "debug":
-                logging.getLogger(__name__).debug("Stream debug: %s", data)
-        final = app.invoke(payload)
-    else:
-        final = app.invoke(payload)
+    invoke_config = None
+    if thread_id:
+        invoke_config = {"configurable": {"thread_id": thread_id}}
 
-    if memory_file is not None:
-        _save_memory(
-            memory_file,
-            memory=final.get("memory", []),
-            resolved_filters=final.get("resolved_filters", {}),
-        )
+    try:
+        if stream_mode:
+            logging.getLogger(__name__).info("QnA stream mode enabled: %s", stream_mode)
+            for mode, data in app.stream(payload, config=invoke_config, stream_mode=[stream_mode]):
+                if mode == "updates" and isinstance(data, dict):
+                    logging.getLogger(__name__).info("Stream update: %s", list(data.keys()))
+                elif mode == "tasks":
+                    logging.getLogger(__name__).info("Stream task: %s", data)
+                elif mode == "checkpoints":
+                    logging.getLogger(__name__).info("Stream checkpoint")
+                elif mode == "debug":
+                    logging.getLogger(__name__).debug("Stream debug: %s", data)
+            final = app.invoke(payload, config=invoke_config)
+        else:
+            final = app.invoke(payload, config=invoke_config)
+    finally:
+        if checkpoint_conn is not None:
+            checkpoint_conn.close()
 
     logging.getLogger(__name__).info(
         "QnA completed: memory_size=%s resolved_filters=%s",

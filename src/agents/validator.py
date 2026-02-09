@@ -22,6 +22,8 @@ class ResultValidatorAgent:
         tool_error = state.get("tool_error")
         df = state.get("query_result_df")
         dfs = state.get("query_result_dfs")
+        preview_single = state.get("query_result_preview")
+        preview_list = state.get("query_result_previews")
 
         if tool_error:
             return AgentResult(
@@ -44,11 +46,18 @@ class ResultValidatorAgent:
                 error="Unsafe or missing SQL",
             )
 
-        if dfs:
+        if preview_list:
+            preview = json.dumps(
+                {"results": [json.loads(p) for p in preview_list]},
+                default=str,
+            )
+        elif dfs:
             preview = json.dumps(
                 {"results": [json.loads(dataframe_to_json_preview(d)) for d in dfs]},
                 default=str,
             )
+        elif preview_single:
+            preview = preview_single
         else:
             preview = dataframe_to_json_preview(df)
 
