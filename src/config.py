@@ -48,12 +48,23 @@ class Settings(BaseSettings):
     openai_model: str = Field(default="gpt-5-nano", validation_alias="OPENAI_MODEL")
     openai_base_url: Optional[str] = Field(default=None, validation_alias="OPENAI_BASE_URL")
 
+    # Azure / Cassie (optional)
+    azure_openai_endpoint: Optional[str] = Field(default=None,validation_alias="AZURE_OPENAI_ENDPOINT")
+    azure_openai_api_key: Optional[str] = Field(default=None,validation_alias="AZURE_OPENAI_API_KEY")
+    azure_chat_deployment: Optional[str] = Field(default=None, validation_alias="AZURE_CHAT_DEPLOYMENT")
+    azure_openai_deployment: Optional[str] = Field(default=None, validation_alias="AZURE_OPENAI_DEPLOYMENT")
+    azure_openai_api_version: Optional[str] = Field(default=None, validation_alias="AZURE_OPENAI_API_VERSION")
+    openai_api_version: Optional[str] = Field(default=None, validation_alias="OPENAI_API_VERSION")
+    token_endpoint: Optional[str] = Field(default=None, validation_alias="TOKEN_ENDPOINT")
+    azure_tenant_id: Optional[str] = Field(default=None,validation_alias="AZURE_TENANT_ID")
+    azure_client_id: Optional[str] = Field(default=None,validation_alias="AZURE_CLIENT_ID")
+    azure_client_secret: Optional[str] = Field(default=None,validation_alias="AZURE_CLIENT_SECRET")
+
     # LangSmith (optional)
-    langchain_tracing_v2: bool = Field(default=False, validation_alias="LANGCHAIN_TRACING_V2")
-    langchain_api_key: Optional[str] = Field(default=None, validation_alias="LANGCHAIN_API_KEY")
-    langchain_project: str = Field(
-        default="retail-insights-assistant", validation_alias="LANGCHAIN_PROJECT"
-    )
+    # langchain_tracing_v2: bool = Field(default=False, validation_alias="LANGCHAIN_TRACING_V2")
+    # langchain_api_key: Optional[str] = Field(default=None, validation_alias="LANGCHAIN_API_KEY")
+    # langchain_project: str = Field(
+        # default="retail-insights-assistant", validation_alias="LANGCHAIN_PROJECT")
 
     def model_post_init(self, __context) -> None:  # type: ignore[override]
         # Fill path defaults relative to project root (but allow env overrides).

@@ -5,6 +5,30 @@
       "answer": "- Top category by sales: Set\n- Total_sales for Set: 39,204,124.03\n- Next highest categories for context: kurta \u2014 21,299,546.70; Western Dress \u2014 11,216,072.69\n- Data source: mart.sales_clean (results from the provided aggregation)",
       "sql": "SELECT CATEGORY AS category, SUM(AMOUNT) AS total_sales FROM mart.sales_clean GROUP BY CATEGORY ORDER BY SUM(AMOUNT) DESC LIMIT 200",
       "filters": {}
+    },
+    {
+      "question": "What is the top category by sales in mart.sales_clean?",
+      "answer": "- Top category by sales in mart.sales_clean: Set \u2014 total_sales = 39204124.029999904",
+      "sql": "SELECT category, SUM(amount) AS total_sales FROM mart.sales_clean WHERE category IS NOT NULL GROUP BY category ORDER BY total_sales DESC LIMIT 200",
+      "filters": [
+        {
+          "column": "category",
+          "operator": "IS NOT NULL",
+          "value": null
+        }
+      ]
+    },
+    {
+      "question": "What is the top category by sales in mart.sales_clean?",
+      "answer": "- The top category by sales in `mart.sales_clean` is \"Set\" with total sales amounting to 39,204,124.03.\n- The second highest category is \"kurta\" with total sales of 21,299,546.70.\n- \"Western Dress\" ranks third with total sales of 11,216,072.69.\n- Other categories include \"Top\" with 5,347,792.30 in sales and \"Ethnic Dress\" with 791,217.66.\n- The categories with the lowest sales are \"Dupatta\" with 915.00 and \"Saree\" with 123,933.76.",
+      "sql": "SELECT CATEGORY AS category, SUM(AMOUNT) AS total_sales FROM mart.sales_clean WHERE CATEGORY IS NOT NULL GROUP BY CATEGORY ORDER BY total_sales DESC LIMIT 200",
+      "filters": [
+        {
+          "column": "CATEGORY",
+          "operator": "IS NOT NULL",
+          "value": null
+        }
+      ]
     }
   ],
   "resolved_filters": {}

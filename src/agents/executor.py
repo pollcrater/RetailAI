@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import logging
 from typing import Any
 
 from src.agents.base import AgentResult
@@ -14,9 +15,13 @@ class SqlExecutorAgent:
     name: str = "executor"
 
     def run(self, state: dict[str, Any]) -> AgentResult:
+        logger = logging.getLogger(__name__)
         runner: DuckDBRunner = state["duckdb_runner"]
         queries = state.get("queries") or []
         sql = str(state.get("sql", "")).strip()
+        logger.error("EXECUTOR DEBUG - SQL received: %r", sql)
+        logger.error("SQL length: %s", len(sql))
+        logger.error("First 50 chars: %s", sql[:50] if sql else "EMPTY")
         if not queries and not sql:
             return AgentResult(ok=False, content=None, error="Missing SQL to execute")
 
