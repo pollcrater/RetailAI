@@ -10,3 +10,7 @@ C:/Users/praveenkumar.reddybheemreddy@network.lilly.com/GenAI/RetailAI/.venv/Scr
 
 # QnA:
  C:/Users/praveenkumar.reddybheemreddy@network.lilly.com/GenAI/RetailAI/.venv/Scripts/python.exe app.py ask-db --question "What is the top category by sales in mart.sales_clean?" --db data/retail_sales.duckdb --no-load
+ C:/Users/praveenkumar.reddybheemreddy@network.lilly.com/GenAI/RetailAI/.venv/Scripts/python.exe app.py ask-db --question "What is the total sales amount in mart.sales_clean?" --db data/retail_sales.duckdb --no-load
+
+
+  C:/Users/praveenkumar.reddybheemreddy@network.lilly.com/GenAI/RetailAI/.venv/Scripts/python.exe app.py ask-db --question "What are top 5 assets in mart.sales_clean?" --db data/retail_sales.duckdb --no-load
