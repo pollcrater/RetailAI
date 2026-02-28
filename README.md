@@ -32,26 +32,33 @@ RetailAI is a GenAI-powered retail insights assistant that enables conversationa
 
 ## App entrypoint
 
-For a single, backend-style entrypoint, use [app.py](app.py):
+Use [app.py](app.py) as the main command entrypoint:
 
-- Print resolved config:
-	- `py app.py config`
-- Raw LLM prompt:
-	- `py app.py llm "Hello"`
-- Summarize a CSV:
-	- `py app.py summarize --csv data\your_sales.csv`
-- Ask a question about a CSV:
-	- `py app.py ask --csv data\your_sales.csv --question "Which region leads sales?"`
 - Summarize DuckDB (KPIs + coverage):
 	- `py app.py summarize-db --db data\retail_sales.duckdb --table mart.sales_clean`
-- Multi-agent QnA over DuckDB:
+- Conversational Q&A over DuckDB (3-agent workflow):
 	- `py app.py ask-db --question "Total sales by category?" --db data\retail_sales.duckdb --no-load`
-- Persist multi-turn memory across runs (checkpointed by thread id):
+- Save conversation context across runs (by conversation/thread id):
 	- `py app.py ask-db --question "What is total sales?" --checkpoint-db data\checkpoints.db --thread-id user_123 --no-load`
+- Optionally show planning metadata (rationale summary + confidence + tags):
+	- `py app.py ask-db --question "Top categories" --thread-id user_123 --no-load --show-planner-meta`
+- Ingest and clean a source CSV into analysis table:
+	- `py app.py ingest --csv data\source\amazon_sale_report.csv --db data\retail_sales.duckdb --table mart.sales_clean`
+
+## Streamlit UI (Chat Interface)
+
+Run the chat-style UI:
+- `streamlit run streamlit_app.py`
+
+UI flow:
+1) Upload a CSV file.
+2) Ingestion pipeline runs automatically.
+3) Choose **Summarize Report** or **Q&A**.
+4) In Q&A mode, each chat uses a thread id with checkpointed memory.
 
 ## Assignment-aligned, streamlined flow
 
-Business flow (simple + correct):
+Business flow:
 1) **Explore & profile data** → generate schema artifacts.
 2) **Materialize raw tables in DuckDB** (one table per file; no schema mixing).
 3) **Process uploads** → cleaned/normalized CSV → load to DuckDB (mart layer).

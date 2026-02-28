@@ -14,3 +14,5 @@ C:/Users/praveenkumar.reddybheemreddy@network.lilly.com/GenAI/RetailAI/.venv/Scr
 
 
   C:/Users/praveenkumar.reddybheemreddy@network.lilly.com/GenAI/RetailAI/.venv/Scripts/python.exe app.py ask-db --question "What are top 5 assets in mart.sales_clean?" --db data/retail_sales.duckdb --no-load
+
+  C:/Users/praveenkumar.reddybheemreddy@network.lilly.com/GenAI/RetailAI/.venv/Scripts/python.exe app.py ask-db --question "What is total sales by category?" --thread-id demo_user --db data/retail_sales.duckdb --no-load --show-planner-meta

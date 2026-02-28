@@ -23,6 +23,9 @@ truststore>=0.10.0; platform_system=="Windows"
 # Data
 pandas
 
+# UI
+streamlit
+
 # Analytics DB
 duckdb>=1.0.0
 
