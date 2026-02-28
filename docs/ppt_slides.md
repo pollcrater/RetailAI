@@ -52,14 +52,14 @@
 
 ## Slide 10 — Example Query → Response Pipeline
 - User question → planner SQL(s)
-- DuckDB execution → results JSON
+- DuckDB execution → dataframe results (then JSON preview for validator)
 - Validator → final analyst response
 
 ## Slide 11 — Monitoring & Reliability
 - Metrics: accuracy, latency, cost, retries.
 - Safe SQL enforcement.
 - Retry/backoff on transient API errors.
-- Memory for multi‑turn context.
+- Checkpointed memory per thread (SQLite) for multi‑turn context.
 
 ## Slide 12 — Code Quality & Review Focus
 - Readability and maintainability
@@ -77,7 +77,7 @@
 - QnA examples with DuckDB results.
 - Comparison‑table summaries.
 
-## Slide 12 — Next Steps
+## Slide 15 — Next Steps
 - UI (Streamlit/Gradio).
 - Advanced insights (YoY, cohort).
 - Production monitoring + caching.

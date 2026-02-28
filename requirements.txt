@@ -8,9 +8,13 @@ openai
 # Agent orchestration
 langgraph>=0.2.0
 langchain-core>=0.3.0
+langchain-openai>=0.3.0
 
 # Obserability
 langsmith
+
+# Azure identity (optional: for AAD auth with Azure OpenAI)
+azure-identity>=1.17.0
 
 # Windows corporate TLS interception (Zscaler, etc.)
 truststore>=0.10.0; platform_system=="Windows"
@@ -18,6 +22,9 @@ truststore>=0.10.0; platform_system=="Windows"
 
 # Data
 pandas
+
+# UI
+streamlit
 
 # Analytics DB
 duckdb>=1.0.0

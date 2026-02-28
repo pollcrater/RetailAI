@@ -4,8 +4,10 @@ import json
 import re
 from dataclasses import dataclass
 from typing import Any
+from pydantic import ValidationError
 
 from src.agents.base import AgentResult
+from src.contracts import PlannerOutputModel
 from src.tools.duckdb_tools import DuckDBRunner
 from src.utils.llm import generate_text
 from src.prompts import prompt_sql_planner
@@ -60,15 +62,27 @@ class SqlPlannerAgent:
 
         raw = generate_text(prompt)
         obj = _extract_json(raw)
-        if not obj or ("sql" not in obj and "queries" not in obj):
+        if not obj:
             return AgentResult(
                 ok=False,
                 content={"raw": raw},
-                error="Planner did not return valid JSON with 'sql' or 'queries'",
+                error="Planner did not return valid JSON.",
             )
 
-        sql = str(obj.get("sql", "")).strip()
-        queries = obj.get("queries")
-        if isinstance(queries, list):
-            queries = [str(q).strip() for q in queries if str(q).strip()]
-        return AgentResult(ok=True, content={"sql": sql, "queries": queries, "meta": obj})
+        try:
+            normalized = PlannerOutputModel.model_validate(obj).model_dump()
+        except ValidationError as e:
+            return AgentResult(
+                ok=False,
+                content={"raw": raw, "validation_errors": e.errors()},
+                error="Planner JSON failed contract validation.",
+            )
+
+        return AgentResult(
+            ok=True,
+            content={
+                "sql": normalized["sql"],
+                "queries": normalized["queries"],
+                "meta": normalized,
+            },
+        )
